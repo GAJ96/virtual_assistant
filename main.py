@@ -30,12 +30,17 @@ def record_audio(ask = False):
             talk("Sorry I did not get that")
         except sr.RequestError:
             talk("Sorry, my speech service is down")
-        return voice_data
+        return voice_data.lower()
 
 
 # These are commands to promt the assisatnat to ntroduce them selfes more prperly
-intro_queries_to_check = ["yes", "tell me about yourself", "what can you tell me about yourself", "who are you", "what can you do", "what functions do you have", "what services do you provide?"]
+intro_queries_to_check = ["tell me about yourself", "what can you tell me about yourself", "who are you", "what can you do", "what functions do you have", "what services do you provide?"]
+# List of known greeting phrases
 greetings_to_check = ["hello", "hi", "greetings", "good mornign", "good afternoon", "good day", "hola amigo"]
+# list of known websites
+urls_to_check = ["athena.itslearning.com/index.aspx", "github.com/GAJ96", "gaj96.github.io/gaj96/index.html", "youtube.com","runalyze.com/dashboard", "DN.se", "svtplay.se", "svt.se"]
+# these commands correspond to above urls
+website_commands = ["athena", "github", "personal website", "youtube", "runalyze", "dn", "svtplay", "svt"]
 
 # This is the response
 def respond(voice_data):
@@ -56,6 +61,20 @@ def respond(voice_data):
     if "what time is it" in voice_data:#or "what date is it" #or "what day is it" or "give me todays date" in voice_data:
         talk(time.ctime())
 
+    # Visit pre defined websites in website_commands
+    if "website" in voice_data:
+        website = ""
+        while website not in website_commands:
+            website = record_audio(talk("Which website do you wish to visit?"))
+            print(website)
+            if website in website_commands:
+                url = "https://" + urls_to_check[website_commands.index(website)]
+                print(website_commands.index(website))
+                print(url)
+                webbrowser.get().open(url)
+                talk("Opening " + website)
+            else:
+                talk("Yeah I did not get that")
     # Search on google
     if "search" in voice_data:
         search = record_audio(talk("What do you want to search for?"))
